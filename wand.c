@@ -17,6 +17,15 @@ int main(int argc,char **argv)
   description=(char *) MagickRelinquishMemory(description); \
   exit(-1); \
 }
+  
+  /* DEFINE PARAMETERS required for output:
+     x size
+     y wize
+     
+    TODO: default values
+    TODO: arg parameters
+  */
+
 
   MagickBooleanType
     status;
@@ -41,20 +50,19 @@ int main(int argc,char **argv)
     Initialize an image.
   */
   MagickWandGenesis();
+
   magick_wand=NewMagickWand();
-  
   bgcolor=NewPixelWand();
   PixelSetColor(bgcolor, "#0000ff");
   
-  status=MagickSetBackgroundColor(magick_wand, bgcolor);
-  status=MagickSetSize(magick_wand, 600, 600);
-  
-  status=MagickNewImage(magick_wand, 600, 600, bgcolor);
+  MagickSetBackgroundColor(magick_wand, bgcolor);
+  MagickSetSize(magick_wand, 600, 600);
+  MagickNewImage(magick_wand, 600, 600, bgcolor);
   
   drawing_wand = NewDrawingWand();
   DrawCircle(drawing_wand, 100, 100, 120, 120);
 
-  status=MagickDrawImage(magick_wand, drawing_wand);
+  MagickDrawImage(magick_wand, drawing_wand);
   
   //MagickConstituteImage(wand,600,600,"RGB",CharPixel,pixels);
 

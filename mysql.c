@@ -21,7 +21,7 @@ int main() {
    }
 
    /* send SQL query */
-   if (mysql_query(conn, "SELECT * FROM planets")) {
+   if (mysql_query(conn, "SELECT x,y,z,hue FROM planets LEFT JOIN players on planets.player_id = players.id")) {
       fprintf(stderr, "%s\n", mysql_error(conn));
       return(0);
    }
@@ -30,7 +30,7 @@ int main() {
    
    /* output fields 1 and 2 of each row */
    while ((row = mysql_fetch_row(res)) != NULL)
-      printf("%s %s\n", row[1], row[2]);
+      printf("%s %s %s (%s)\n", row[0], row[1], row[2], row[3]);
 
    /* Release memory used to store results and close connection */
    mysql_free_result(res);
