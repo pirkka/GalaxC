@@ -44,7 +44,7 @@ int main(int argc,char **argv)
   magick_wand=NewMagickWand();
   
   bgcolor=NewPixelWand();
-  PixelSetColor(bgcolor, "#000000");
+  PixelSetColor(bgcolor, "#0000ff");
   
   status=MagickSetBackgroundColor(magick_wand, bgcolor);
   status=MagickSetSize(magick_wand, 600, 600);
@@ -52,8 +52,9 @@ int main(int argc,char **argv)
   status=MagickNewImage(magick_wand, 600, 600, bgcolor);
   
   drawing_wand = NewDrawingWand();
-  
   DrawCircle(drawing_wand, 100, 100, 120, 120);
+
+  status=MagickDrawImage(magick_wand, drawing_wand);
   
   //MagickConstituteImage(wand,600,600,"RGB",CharPixel,pixels);
 
