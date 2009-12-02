@@ -1,0 +1,3 @@
+COMPILATION
+
+gcc -o galaxc $(mysql_config --cflags) prog.c $(mysql_config --libs)
