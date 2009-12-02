@@ -1,3 +1,5 @@
-COMPILATION
+COMPILE
 
-gcc -o galaxc $(mysql_config --cflags) prog.c $(mysql_config --libs)
+gcc -o galaxc $(mysql_config --cflags) mysql.c $(mysql_config --libs)
+
+cc `MagickWand-config --cflags --cppflags` -o wand wand.c `MagickWand-config --ldflags --libs`
