@@ -83,7 +83,7 @@ int main() {
   drawing_wand = NewDrawingWand();
 
    /* send SQL query for the actual planet info */
-  if (mysql_query(conn, "SELECT x,y,z,hue FROM planets LEFT JOIN players on planets.player_id = players.id")) {
+  if (mysql_query(conn, "SELECT x,y,z,hue, IF(planets.id = players.homeworld,1,0) as homeworld FROM planets LEFT JOIN players on planets.player_id = players.id")) {
     fprintf(stderr, "%s\n", mysql_error(conn));
     return(0);
   }
@@ -92,12 +92,15 @@ int main() {
 
   /* Go through the list of planets in the sql result set... */
   while ((row = mysql_fetch_row(res)) != NULL) {
-    printf("%s %s %s (%s)\n", row[0], row[1], row[2], row[3]);
+    printf("%s %s %s (%s)\n", row[0], row[1], row[2], row[3], row[4]);
     planet_x = atoi(row[0]) * planet_width + (map_width/2);
-    planet_y = atoi(row[1]) * planet_width + (map_height/2);
+    planet_y = -atoi(row[1]) * planet_width + (map_height/2);
     planet_radius = planet_width/2;
-    printf("%f\n", atof(row[3]));
-    PixelSetHSL(drawing_color, atof(row[3])/360, 0.80, 0.50);
+    if(row[3] != NULL) {
+      PixelSetHSL(drawing_color, atof(row[3])/360, 0.80, 0.50);
+    } else {
+      PixelSetHSL(drawing_color, 1, 0, 0.50);
+    }
     DrawSetStrokeColor(drawing_wand, drawing_color);
     DrawSetFillColor(drawing_wand, drawing_color);
     DrawCircle(drawing_wand, planet_x, planet_y, planet_x + planet_radius, planet_y + planet_radius);
