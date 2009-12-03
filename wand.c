@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <wand/MagickWand.h>
 
-int drawGalaxy()
+DrawingWand* initDrawingWand()
 {
 #define ThrowWandException(wand) \
 { \
@@ -60,7 +60,11 @@ int drawGalaxy()
   MagickNewImage(magick_wand, 600, 600, bgcolor);
   
   drawing_wand = NewDrawingWand();
+  return drawing_wand;
+  
+  /* THIS IS WHERE THE MAGIK HAPPENS */
   DrawCircle(drawing_wand, 100, 100, 120, 120);
+  /* THIS IS WHERE THE MAGIK HAPPENS */
 
   MagickDrawImage(magick_wand, drawing_wand);
   
