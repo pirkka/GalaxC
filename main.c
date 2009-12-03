@@ -9,6 +9,7 @@ int main() {
   MagickWand *magick_wand;   
   DrawingWand *drawing_wand;
   PixelWand *bgcolor;
+  PixelWand *drawing_color;
   MagickBooleanType status;
 
   char *server = "localhost";
@@ -70,8 +71,10 @@ int main() {
   MagickWandGenesis();
 
   magick_wand=NewMagickWand();
+  //MagickSetImageColorspace(magick_wand, HSLColorspace);
   bgcolor=NewPixelWand();
-  PixelSetColor(bgcolor, "#0000ff");
+  drawing_color = NewPixelWand();
+  PixelSetColor(bgcolor, "#000000");
 
   MagickSetBackgroundColor(magick_wand, bgcolor);
   MagickSetSize(magick_wand, map_width, map_height);
@@ -87,12 +90,16 @@ int main() {
 
   res = mysql_use_result(conn);
 
-  /* output fields 1 and 2 of each row */
+  /* Go through the list of planets in the sql result set... */
   while ((row = mysql_fetch_row(res)) != NULL) {
     printf("%s %s %s (%s)\n", row[0], row[1], row[2], row[3]);
     planet_x = atoi(row[0]) * planet_width + (map_width/2);
     planet_y = atoi(row[1]) * planet_width + (map_height/2);
     planet_radius = planet_width/2;
+    printf("%f\n", atof(row[3]));
+    PixelSetHSL(drawing_color, atof(row[3])/360, 0.80, 0.50);
+    DrawSetStrokeColor(drawing_wand, drawing_color);
+    DrawSetFillColor(drawing_wand, drawing_color);
     DrawCircle(drawing_wand, planet_x, planet_y, planet_x + planet_radius, planet_y + planet_radius);
   };
   /* Release memory used to store results and close connection */
