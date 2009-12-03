@@ -5,6 +5,8 @@ int fetch_single_value_from_db(MYSQL *conn, char query[]){
   MYSQL_RES *res;
   MYSQL_ROW row;
   
+  int retval;
+  
    /* send SQL query */
    if (mysql_query(conn, query)) {
       fprintf(stderr, "%s\n", mysql_error(conn));
@@ -15,11 +17,12 @@ int fetch_single_value_from_db(MYSQL *conn, char query[]){
    
    /* output fields 1 and 2 of each row */
    while ((row = mysql_fetch_row(res)) != NULL)
-      printf("%s %s %s (%s)\n", row[0], row[1], row[2], row[3]);
+      retval = atoi(row[0]);
 
    /* Release memory used to store results and close connection */
    mysql_free_result(res);
   
+   return retval;
   
 }
 
@@ -32,6 +35,7 @@ int main() {
    char *user = "root";
    char *password = "root";
    char *database = "spacevictory";
+   int max_x, max_y, min_x, min_y;
    
    conn = mysql_init(NULL);
    
@@ -42,7 +46,8 @@ int main() {
       return(0);
    }
    
-   fetch_single_value_from_db(conn, "select MAX(x) from planets");
+   max_x = fetch_single_value_from_db(conn, "select MAX(x) from planets");
+   printf("MAX X: %i\n", max_x);
 
    /* send SQL query */
    if (mysql_query(conn, "SELECT x,y,z,hue FROM planets LEFT JOIN players on planets.player_id = players.id")) {
