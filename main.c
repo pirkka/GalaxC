@@ -29,6 +29,7 @@ int main() {
   char *user = "root";
   char *password = "root";
   char *database = "spacevictory";
+  char annotation[100];
 
   int map_width = 930;
   int map_height = 930;
@@ -74,7 +75,7 @@ int main() {
   }
   printf("GALAXY WIDTH: %i\n", galaxy_width);
   printf("GALAXY HEIGHT: %i\n", galaxy_height);
-  printf("GALAXY MEASUER: %i\n", galaxy_measure);
+  printf("GALAXY MEASURE: %i\n", galaxy_measure);
 
 
   planet_width = map_width / galaxy_measure;
@@ -100,14 +101,14 @@ int main() {
 
   drawing_wand = NewDrawingWand();
   DrawSetFontSize(drawing_wand, 8);
-  DrawSetFont(drawing_wand, "/Users/pirkka/code/galaxc/fonts/slkscr.ttf");
+  DrawSetFont(drawing_wand, "./fonts/slkscr.ttf");
   DrawSetTextEncoding(drawing_wand, "UTF-8");
   DrawSetStrokeOpacity(drawing_wand, 0);
   DrawSetFillColor(drawing_wand, drawing_color);
   DrawAnnotation(drawing_wand, 10, 10, "Galaxy Map");
 
    /* send SQL query for the actual planet info */
-  if (mysql_query(conn, "SELECT x,y,z,hue,planets.name, IF(planets.id = players.homeworld,1,0) as homeworld FROM planets LEFT JOIN players on planets.player_id = players.id")) {
+  if (mysql_query(conn, "SELECT x,y,z,hue,IF(planets.name IS NOT NULL, planets.name, 'unnamed'), IF(planets.id = players.homeworld,1,0) as homeworld FROM planets LEFT JOIN players on planets.player_id = players.id")) {
     fprintf(stderr, "%s\n", mysql_error(conn));
     return(0);
   }
@@ -132,7 +133,8 @@ int main() {
       DrawSetTextAntialias(drawing_wand, MagickFalse);
       DrawSetStrokeWidth(drawing_wand, 0);
       DrawSetStrokeOpacity(drawing_wand, 0);
-      DrawAnnotation(drawing_wand, 0.0 + planet_x + planet_radius + 5, 0.0 + planet_y + planet_radius, row[4]);
+      sprintf(annotation, "%s %s,%s,%s", row[4], row[0], row[1], row[2]);
+      DrawAnnotation(drawing_wand, 0.0 + planet_x + planet_radius + 5, 0.0 + planet_y + planet_radius, annotation);
     }
   };
   /* Release memory used to store results and close connection */
