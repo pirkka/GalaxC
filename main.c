@@ -34,7 +34,7 @@ int main() {
   int map_width = 930;
   int map_height = 930;
 
-  int max_x, max_y, max_z, min_x, min_y, min_z;
+  int max_x, max_y, max_z, min_x, min_y, min_z, biggest_deviation;
   int galaxy_width, galaxy_height, no_of_planets, galaxy_measure;
   int planet_x, planet_y, planet_height, planet_width, planet_radius;
 
@@ -66,13 +66,11 @@ int main() {
   min_z = fetch_single_value_from_db(conn, "select MIN(z) from planets");
   printf("MIN Z: %i\n", min_z);
 
-  galaxy_width = max_x - min_x + 1;
-  galaxy_height = max_y - min_y + 1;
-  if (galaxy_width > galaxy_height) {
-    galaxy_measure = galaxy_width;
-  } else {
-    galaxy_measure = galaxy_width;
-  }
+  biggest_deviation = max(max_x, max(max_y, -min(min_x, min_y)));
+
+  galaxy_width = biggest_deviation * 2 + 1;
+  galaxy_height = biggest_deviation * 2 + 1;
+  galaxy_measure = biggest_deviation * 2 + 1;
   printf("GALAXY WIDTH: %i\n", galaxy_width);
   printf("GALAXY HEIGHT: %i\n", galaxy_height);
   printf("GALAXY MEASURE: %i\n", galaxy_measure);
