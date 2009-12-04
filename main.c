@@ -90,16 +90,20 @@ int main() {
   magick_wand=NewMagickWand();
   //MagickSetImageColorspace(magick_wand, HSLColorspace);
   bgcolor=NewPixelWand();
-  drawing_color = NewPixelWand();
   PixelSetColor(bgcolor, "#000000");
-
+  drawing_color = NewPixelWand();
+  PixelSetHSL(drawing_color, 1, 1, 1);
+  
   MagickSetBackgroundColor(magick_wand, bgcolor);
   MagickSetSize(magick_wand, map_width, map_height);
   MagickNewImage(magick_wand, map_width, map_height, bgcolor);
 
   drawing_wand = NewDrawingWand();
-  DrawSetFontSize(drawing_wand, 9.0);
-  DrawSetFont(drawing_wand, "fonts/slkscr.tff");
+  DrawSetFontSize(drawing_wand, 10);
+  DrawSetFont(drawing_wand, "/Users/pirkka/code/galaxc/fonts/slkscr.tff");
+  DrawSetTextEncoding(drawing_wand, "UTF-8");
+  DrawSetStrokeOpacity(drawing_wand, 0);
+  DrawSetFillColor(drawing_wand, drawing_color);
   DrawAnnotation(drawing_wand, 10, 10, "Galaxy Map");
 
    /* send SQL query for the actual planet info */
@@ -124,11 +128,11 @@ int main() {
     DrawSetStrokeColor(drawing_wand, drawing_color);
     DrawSetFillColor(drawing_wand, drawing_color);
     DrawCircle(drawing_wand, planet_x, planet_y, planet_x + planet_radius, planet_y + planet_radius);
-    /*
     if(row[4] != NULL) {
-      DrawAnnotation(drawing_wand, 0.0 + planet_x + planet_radius, 0.0 + planet_y + planet_radius, row[4]);
+      DrawSetTextAntialias(drawing_wand, MagickFalse);
+      DrawSetStrokeWidth(drawing_wand, 0);
+      DrawAnnotation(drawing_wand, 0.0 + planet_x + planet_radius + 5, 0.0 + planet_y + planet_radius, row[4]);
     }
-    */
   };
   /* Release memory used to store results and close connection */
   mysql_free_result(res);

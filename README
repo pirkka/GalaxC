@@ -7,7 +7,12 @@ COMPILE
 
 gcc -o galaxc $(MagickWand-config --cflags --cppflags) $(mysql_config --cflags) main.c $(mysql_config --libs) `MagickWand-config --ldflags --libs`
 
-
 FONTS
 
 fonts needs to be found in the ./fonts directory
+
+DEV NOTES
+
+* no need to catch magick errors when developing, as they give you nice info of what you're doing wrong. 
+* texts can 
+* there's not a lot of web pages that contain MagickWand C tips. this, however, looks like a nice page: http://members.shaw.ca/el.supremo/MagickWand/
