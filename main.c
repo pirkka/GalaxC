@@ -99,8 +99,8 @@ int main() {
   MagickNewImage(magick_wand, map_width, map_height, bgcolor);
 
   drawing_wand = NewDrawingWand();
-  DrawSetFontSize(drawing_wand, 10);
-  DrawSetFont(drawing_wand, "/Users/pirkka/code/galaxc/fonts/slkscr.tff");
+  DrawSetFontSize(drawing_wand, 8);
+  DrawSetFont(drawing_wand, "/Users/pirkka/code/galaxc/fonts/slkscr.ttf");
   DrawSetTextEncoding(drawing_wand, "UTF-8");
   DrawSetStrokeOpacity(drawing_wand, 0);
   DrawSetFillColor(drawing_wand, drawing_color);
@@ -131,6 +131,7 @@ int main() {
     if(row[4] != NULL) {
       DrawSetTextAntialias(drawing_wand, MagickFalse);
       DrawSetStrokeWidth(drawing_wand, 0);
+      DrawSetStrokeOpacity(drawing_wand, 0);
       DrawAnnotation(drawing_wand, 0.0 + planet_x + planet_radius + 5, 0.0 + planet_y + planet_radius, row[4]);
     }
   };
