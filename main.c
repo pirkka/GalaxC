@@ -30,6 +30,7 @@ int main() {
   char *password = "root";
   char *database = "spacevictory";
   char annotation[100];
+  char heading[100];
 
   int map_width = 930;
   int map_height = 930;
@@ -37,6 +38,8 @@ int main() {
   int max_x, max_y, max_z, min_x, min_y, min_z, biggest_deviation;
   int galaxy_width, galaxy_height, no_of_planets, galaxy_measure;
   int planet_x, planet_y, planet_height, planet_width, planet_radius;
+
+  double galaxy_age;
 
   conn = mysql_init(NULL);
 
@@ -51,6 +54,10 @@ int main() {
     Get ballpark galaxy data required for drawing initializations.
   */
 
+  galaxy_age = fetch_single_value_from_db(conn, "select age from galaxies limit 1");
+  printf("GALAXY AGE: %f\n", galaxy_age);
+  no_of_planets = fetch_single_value_from_db(conn, "select COUNT(*) from planets");
+  printf("NO OF PLANETS: %i\n", no_of_planets);
   no_of_planets = fetch_single_value_from_db(conn, "select COUNT(*) from planets");
   printf("NO OF PLANETS: %i\n", no_of_planets);
   max_x = fetch_single_value_from_db(conn, "select MAX(x) from planets");
@@ -103,7 +110,8 @@ int main() {
   DrawSetTextEncoding(drawing_wand, "UTF-8");
   DrawSetStrokeOpacity(drawing_wand, 0);
   DrawSetFillColor(drawing_wand, drawing_color);
-  DrawAnnotation(drawing_wand, 10, 10, "Galaxy Map");
+  sprintf(heading, "Galaxy Map generated in space year %f", galaxy_age);
+  DrawAnnotation(drawing_wand, 5, 10, heading);
 
    /* send SQL query for the actual planet info */
   if (mysql_query(conn, "SELECT x,y,z,hue,IF(planets.name IS NOT NULL, planets.name, 'unnamed'), IF(planets.id = players.homeworld,players.name,NULL) as homeworld FROM planets LEFT JOIN players on planets.player_id = players.id")) {
