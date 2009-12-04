@@ -5,4 +5,9 @@ ghostscript 8.64
 
 COMPILE
 
-gcc -o galaxc $(MagickWand-config --cflags --cppflags) $(mysql_config --cflags) main.c mysql.c wand.c $(mysql_config --libs) `MagickWand-config --ldflags --libs`
+gcc -o galaxc $(MagickWand-config --cflags --cppflags) $(mysql_config --cflags) main.c $(mysql_config --libs) `MagickWand-config --ldflags --libs`
+
+
+FONTS
+
+fonts needs to be found in the ./fonts directory

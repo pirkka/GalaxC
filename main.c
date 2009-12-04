@@ -60,12 +60,11 @@ int main() {
   printf("MAX Y: %i\n", max_y);
   min_y = fetch_single_value_from_db(conn, "select MIN(y) from planets");
   printf("MIN Y: %i\n", min_y);
-  /*
   max_z = fetch_single_value_from_db(conn, "select MAX(z) from planets");
   printf("MAX Z: %i\n", max_z);
   min_z = fetch_single_value_from_db(conn, "select MIN(z) from planets");
   printf("MIN Z: %i\n", min_z);
-  */
+
   galaxy_width = max_x - min_x + 1;
   galaxy_height = max_y - min_y + 1;
   if (galaxy_width > galaxy_height) {
@@ -100,7 +99,7 @@ int main() {
 
   drawing_wand = NewDrawingWand();
   DrawSetFontSize(drawing_wand, 9.0);
-  DrawSetFont(drawing_wand, "Helvetica");
+  DrawSetFont(drawing_wand, "fonts/slkscr.tff");
   DrawAnnotation(drawing_wand, 10, 10, "Galaxy Map");
 
    /* send SQL query for the actual planet info */
@@ -125,24 +124,22 @@ int main() {
     DrawSetStrokeColor(drawing_wand, drawing_color);
     DrawSetFillColor(drawing_wand, drawing_color);
     DrawCircle(drawing_wand, planet_x, planet_y, planet_x + planet_radius, planet_y + planet_radius);
+    /*
     if(row[4] != NULL) {
-      //DrawAnnotation(drawing_wand, 0.0 + planet_x + planet_radius, 0.0 + planet_y + planet_radius, row[4]);
+      DrawAnnotation(drawing_wand, 0.0 + planet_x + planet_radius, 0.0 + planet_y + planet_radius, row[4]);
     }
+    */
   };
   /* Release memory used to store results and close connection */
   mysql_free_result(res);
   mysql_close(conn);
 
   /* draw to wand image */
-  status=MagickDrawImage(magick_wand, drawing_wand);
-  if (status == MagickFalse)
-    ThrowWandException(magick_wand);
+  MagickDrawImage(magick_wand, drawing_wand);
   /*
     Write the image then destroy it.
   */
-  status=MagickWriteImages(magick_wand,"galaxy.png", MagickTrue);
-  if (status == MagickFalse)
-    ThrowWandException(magick_wand);
+  MagickWriteImages(magick_wand,"galaxy.png", MagickTrue);
   magick_wand=DestroyMagickWand(magick_wand);
   MagickWandTerminus();
   return(0);
