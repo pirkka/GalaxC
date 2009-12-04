@@ -1,7 +1,20 @@
 #include "galaxc.h"
 
 int main() {
-  
+#define ThrowWandException(wand) \
+{ \
+  char \
+    *description; \
+ \
+  ExceptionType \
+    severity; \
+ \
+  description=MagickGetException(wand,&severity); \
+  (void) fprintf(stderr,"%s %s %lu %s\n",GetMagickModule(),description); \
+  description=(char *) MagickRelinquishMemory(description); \
+  exit(-1); \
+}
+
   MYSQL *conn;
   MYSQL_RES *res;
   MYSQL_ROW row;
@@ -20,7 +33,7 @@ int main() {
   int map_width = 930;
   int map_height = 930;
 
-  int max_x, max_y, min_x, min_y;
+  int max_x, max_y, max_z, min_x, min_y, min_z;
   int galaxy_width, galaxy_height, no_of_planets, galaxy_measure;
   int planet_x, planet_y, planet_height, planet_width, planet_radius;
 
@@ -41,13 +54,18 @@ int main() {
   printf("NO OF PLANETS: %i\n", no_of_planets);
   max_x = fetch_single_value_from_db(conn, "select MAX(x) from planets");
   printf("MAX X: %i\n", max_x);
-  max_y = fetch_single_value_from_db(conn, "select MAX(y) from planets");
-  printf("MAX Y: %i\n", max_y);
   min_x = fetch_single_value_from_db(conn, "select MIN(x) from planets");
   printf("MIN X: %i\n", min_x);
+  max_y = fetch_single_value_from_db(conn, "select MAX(y) from planets");
+  printf("MAX Y: %i\n", max_y);
   min_y = fetch_single_value_from_db(conn, "select MIN(y) from planets");
   printf("MIN Y: %i\n", min_y);
-
+  /*
+  max_z = fetch_single_value_from_db(conn, "select MAX(z) from planets");
+  printf("MAX Z: %i\n", max_z);
+  min_z = fetch_single_value_from_db(conn, "select MIN(z) from planets");
+  printf("MIN Z: %i\n", min_z);
+  */
   galaxy_width = max_x - min_x + 1;
   galaxy_height = max_y - min_y + 1;
   if (galaxy_width > galaxy_height) {
@@ -81,9 +99,12 @@ int main() {
   MagickNewImage(magick_wand, map_width, map_height, bgcolor);
 
   drawing_wand = NewDrawingWand();
+  DrawSetFontSize(drawing_wand, 9.0);
+  DrawSetFont(drawing_wand, "Helvetica");
+  DrawAnnotation(drawing_wand, 10, 10, "Galaxy Map");
 
    /* send SQL query for the actual planet info */
-  if (mysql_query(conn, "SELECT x,y,z,hue, IF(planets.id = players.homeworld,1,0) as homeworld FROM planets LEFT JOIN players on planets.player_id = players.id")) {
+  if (mysql_query(conn, "SELECT x,y,z,hue,planets.name, IF(planets.id = players.homeworld,1,0) as homeworld FROM planets LEFT JOIN players on planets.player_id = players.id")) {
     fprintf(stderr, "%s\n", mysql_error(conn));
     return(0);
   }
@@ -92,10 +113,10 @@ int main() {
 
   /* Go through the list of planets in the sql result set... */
   while ((row = mysql_fetch_row(res)) != NULL) {
-    printf("%s %s %s (%s)\n", row[0], row[1], row[2], row[3], row[4]);
+    printf("%s %s %s (%s) %s %s\n", row[0], row[1], row[2], row[3], row[4], row[5]);
     planet_x = atoi(row[0]) * planet_width + (map_width/2);
     planet_y = -atoi(row[1]) * planet_width + (map_height/2);
-    planet_radius = planet_width/2;
+    planet_radius = planet_width/2 - 1;
     if(row[3] != NULL) {
       PixelSetHSL(drawing_color, atof(row[3])/360, 0.80, 0.50);
     } else {
@@ -104,14 +125,18 @@ int main() {
     DrawSetStrokeColor(drawing_wand, drawing_color);
     DrawSetFillColor(drawing_wand, drawing_color);
     DrawCircle(drawing_wand, planet_x, planet_y, planet_x + planet_radius, planet_y + planet_radius);
+    if(row[4] != NULL) {
+      //DrawAnnotation(drawing_wand, 0.0 + planet_x + planet_radius, 0.0 + planet_y + planet_radius, row[4]);
+    }
   };
   /* Release memory used to store results and close connection */
   mysql_free_result(res);
   mysql_close(conn);
 
   /* draw to wand image */
-  MagickDrawImage(magick_wand, drawing_wand);
-
+  status=MagickDrawImage(magick_wand, drawing_wand);
+  if (status == MagickFalse)
+    ThrowWandException(magick_wand);
   /*
     Write the image then destroy it.
   */
