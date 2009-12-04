@@ -108,7 +108,7 @@ int main() {
   DrawAnnotation(drawing_wand, 10, 10, "Galaxy Map");
 
    /* send SQL query for the actual planet info */
-  if (mysql_query(conn, "SELECT x,y,z,hue,IF(planets.name IS NOT NULL, planets.name, 'unnamed'), IF(planets.id = players.homeworld,1,0) as homeworld FROM planets LEFT JOIN players on planets.player_id = players.id")) {
+  if (mysql_query(conn, "SELECT x,y,z,hue,IF(planets.name IS NOT NULL, planets.name, 'unnamedg'), IF(planets.id = players.homeworld,1,0) as homeworld FROM planets LEFT JOIN players on planets.player_id = players.id")) {
     fprintf(stderr, "%s\n", mysql_error(conn));
     return(0);
   }
@@ -129,7 +129,7 @@ int main() {
     DrawSetStrokeColor(drawing_wand, drawing_color);
     DrawSetFillColor(drawing_wand, drawing_color);
     DrawCircle(drawing_wand, planet_x, planet_y, planet_x + planet_radius, planet_y + planet_radius);
-    if(row[4] != NULL) {
+    if(row[4] != NULL && atoi(row[5]) == 1) {
       DrawSetTextAntialias(drawing_wand, MagickFalse);
       DrawSetStrokeWidth(drawing_wand, 0);
       DrawSetStrokeOpacity(drawing_wand, 0);
