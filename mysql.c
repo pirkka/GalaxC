@@ -25,4 +25,3 @@ int fetch_single_value_from_db(MYSQL *conn, char query[]){
    return retval;
   
 }
-

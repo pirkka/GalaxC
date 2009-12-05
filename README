@@ -7,6 +7,12 @@ COMPILE
 
 gcc -o galaxc $(MagickWand-config --cflags --cppflags) $(mysql_config --cflags) main.c $(mysql_config --libs) `MagickWand-config --ldflags --libs`
 
+if no MagickWand-config found, however...
+
+gcc -o galaxc -I/usr/include -I/usr/include/wand -fopenmp $(mysql_config --cflags) main.c -L/usr/lib -lfreetype -lz -ltiff -lfreetype -ljpeg -L/usr/lib -lfontconfig -lexpat -lfreetype -lz -/usr/lib/libWand.so -lXext -lSM -lICE -lX11 -lXt -lbz2 -lz -lm -lgomp -lpthread -lltdl $(mysql_config --libs) 
+
+-lMagickWand -lMagickCore
+
 FONTS
 
 fonts needs to be found in the ./fonts directory
